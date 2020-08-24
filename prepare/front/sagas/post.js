@@ -1,6 +1,6 @@
-import { all, put, fork, takeLatest, delay } from 'redux-saga/effects';
+import { all, put, fork, takeLatest, delay, call } from 'redux-saga/effects';
 import axios from 'axios';
-import shortId from 'shortid';
+// import shortId from 'shortid';
 import {
   ADD_POST_SUCCESS, ADD_POST_FAILURE, ADD_POST_REQUEST,
   ADD_COMMENT_SUCCESS, ADD_COMMENT_FAILURE, ADD_COMMENT_REQUEST,
@@ -30,25 +30,20 @@ function* loadPost(action) {
   }
 }
 function addPostAPI(data) {
-  return axios.post(`/api/post/${data.postId}/comment`, data);
+  return axios.post('/post', { content: data });
 }
 function* addPost(action) {
   // 실패할 경우를 대비해 tyr catch로 감싼다.
   try {
     // action에서 data꺼내서 addPostAPI(data)로 보낸다.
-    // const result = yield call(addPostAPI, action.data);
-    const id = shortId.generate();
-    yield delay(1000);
+    const result = yield call(addPostAPI, action.data);
     yield put({
       type: ADD_POST_SUCCESS,
-      data: {
-        id,
-        content: action.data,
-      },
+      data: result.data,
     }); // 결과를 받아서 이런 식으로 처리
     yield put({
       type: ADD_POST_TO_ME,
-      data: id,
+      data: result.data.id,
     });
   } catch (err) {
     yield put({ // put은 dispatch 개념
@@ -75,20 +70,23 @@ function* removePost(action) {
     });
   }
 }
+function addCommentAPI(data) {
+  return axios.post(`/post/${data.postId}/comment`, data);// 세번째 인자로  {withCredentials: true} 넣어준다. 그러나 매번 넣어주려면 반복되므로 index에서 aixos로 넣어준다.
+}
 function* addComment(action) {
   // 실패할 경우를 대비해 tyr catch로 감싼다.
   try {
-    // const result = yield call(addPostAPI, action.data);
+    const result = yield call(addCommentAPI, action.data);
     yield delay(1000);
     yield put({
       type: ADD_COMMENT_SUCCESS,
-      data: action.data,
+      data: result.data,
       // data: result.data
     }); // 결과를 받아서 이런 식으로 처리
   } catch (err) {
     yield put({ // put은 dispatch 개념
       type: ADD_COMMENT_FAILURE,
-      // data: err.response.data,
+      data: err.response.data,
     });
   }
 }

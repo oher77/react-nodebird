@@ -39,11 +39,9 @@ function logOutAPI() {
 function* logOut() {
   // 실패할 경우를 대비해 tyr catch로 감싼다.
   try {
-    yield delay(1000);
+    yield call(logOutAPI);
     yield put({
       type: LOG_OUT_SUCCESS,
-      // data: result.data
-      // 결과를 받아서 이런 식으로 처리
     });
   } catch (err) {
     yield put({ // put은 dispatch 개념

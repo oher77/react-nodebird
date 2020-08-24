@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     db.Post.belongsTo(db.User);
     db.Post.hasMany(db.Image);
     db.Post.hasMany(db.Comment);
-    db.Post.belongsToMany(db.Hashtag, {through: 'PostHashTag'});
+    db.Post.belongsToMany(db.Hashtag, {through: 'PostHashtag'});
     db.Post.belongsTo(db.Post, {through: 'Retweet'});
     db.Post.belongsToMany(db.User, {through: 'Like', as: 'Liker'});// 게시글과 사용자의 좋아요 관계 / as에 따라서 post.getLikers 처럼 게시글 좋아요 누른 사람을 가져올 수 있다.
   };

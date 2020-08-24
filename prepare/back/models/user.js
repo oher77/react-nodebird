@@ -24,8 +24,8 @@ module.exports = (sequelize, DataTypes) => {
     db.User.hasMany(db.Post);
     db.User.hasMany(db.Comment);
     db.User.belongsToMany(db.Post, {through: 'Like', as: 'Liked'});//사용자와 게시글의 좋아요 관계. /중간테이블 이름은 throug로 정해줄 수도 있다
-    db.User.belongsToMany(db.User, {through:'Follow', as: 'Follower', foreignKey:'FollowingId'}) //foreignKey? Follower를 검색하기 위해 먼저 찾아야할 요소
-    db.User.belongsToMany(db.User, {through:'Follow', as: 'Following', foreignKey:'FollowerId'})
+    db.User.belongsToMany(db.User, {through:'Follow', as: 'Follower', foreignKey:'FollowingId'});//foreignKey? Follower를 검색하기 위해 먼저 찾아야할 요소
+    db.User.belongsToMany(db.User, {through:'Follow', as: 'Following', foreignKey:'FollowerId'});
   };
   return User;
 }

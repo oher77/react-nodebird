@@ -65,19 +65,19 @@ export const addPostRequest = (data) => ({
 //   type: ADD_COMMENT_REQUEST,
 //   data,
 // });
-const dummyPost = (data) => ({
-  id: data.id,
-  User: {
-    id: 1,
-    nickname: '허유즈',
-  },
-  content: data.content,
-  Images: [
-    { src: 'https://m.beadsallmarket.com/web/product/big/201705/4508_shop1_566269.jpg' },
-    { src: 'https://www.docdocdoc.co.kr/news/photo/201709/1046830_1107542_5752.jpg' },
-  ],
-  Comments: [],
-});
+// const dummyPost = (data) => ({
+//   id: data.id,
+//   User: {
+//     id: 1,
+//     nickname: '허유즈',
+//   },
+//   content: data.content,
+//   Images: [
+//     { src: 'https://m.beadsallmarket.com/web/product/big/201705/4508_shop1_566269.jpg' },
+//     { src: 'https://www.docdocdoc.co.kr/news/photo/201709/1046830_1107542_5752.jpg' },
+//   ],
+//   Comments: [],
+// });
 
 const dummyComment = (data) => ({
   id: shorId.generate(),
@@ -114,7 +114,7 @@ const reducer = produce((draft, action) => {
       break;
     case ADD_POST_SUCCESS:
       // unshift()는 mutate, filter()는 immutable
-      draft.mainPosts.unshift(dummyPost(action.data));
+      draft.mainPosts.unshift(action.data);
       draft.addPostLoading = false;
       draft.addPostDone = true;
       break;
@@ -129,8 +129,8 @@ const reducer = produce((draft, action) => {
       draft.addCommentError = null;
       break;
     case ADD_COMMENT_SUCCESS: {
-      const postIndex = draft.mainPosts.findIndex((v) => v.id === action.data.postId);
-      draft.mainPosts[postIndex].Comments.unshift(dummyComment(action.data.content));
+      const postIndex = draft.mainPosts.findIndex((v) => v.id === action.data.PostId); // PostId 대문자임에 유의
+      draft.mainPosts[postIndex].Comments.unshift(action.data);
       draft.addCommentLoading = false;
       draft.addCommentDone = true;
       break;

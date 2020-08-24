@@ -15,7 +15,27 @@ const ErrorMessage = styled.div`
 
 const Signup = () => {
   const dispatch = useDispatch();
-  const { signUpLoading, signUpDone, signUpError } = useSelector((state) => state.user);
+  const { signUpLoading, signUpDone, signUpError, me } = useSelector((state) => state.user);
+  useEffect(() => {
+    if (me) {
+      // replace 는 이전페이지로 가도 보이지 않음.
+      Router.replace('/');
+    }
+  }, [me]);
+
+  useEffect(() => {
+    if (signUpDone) {
+      // push는 이전페이지로 하면 다시 회원가입페이지로 들어가짐.
+      Router.push('/');
+    }
+  }, [signUpDone]);
+
+  useEffect(() => {
+    if (signUpError) {
+      alert(signUpError);
+    }
+  }, [signUpError]);
+
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
   const [nickname, onChangeNickname] = useInput('');
@@ -42,24 +62,12 @@ const Signup = () => {
     if (!terms) {
       return setTermsError(true);
     }
-    console.log(email, nickname, password);
     dispatch({
       type: SIGN_UP_REQUEST,
       data: { email, password, nickname },
     });
   }, [terms, password, passwordCheck]);
 
-  useEffect(() => {
-    if (signUpDone) {
-      Router.push('/');
-    }
-  }, [signUpDone]);
-
-  useEffect(() => {
-    if (signUpError) {
-      alert(signUpError);
-    }
-  }, [signUpError]);
   return (
     <AppLayout>
       <Head>
