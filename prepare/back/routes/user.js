@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const passport = require('passport');
 
 const { User, Post } = require('../models'); //models/index.js 에서 구조분해 할당. db에 등록된  User테이블을 가져와야하므로...
-const {isLoggedIn, isNotLoggedIn} = require('./middlewares');
+const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
 
 const router = express.Router();
 
@@ -13,6 +13,40 @@ const router = express.Router();
 //res.send  가 먼저 진행돼 버리면 곤란...
 // 프론드에서 axios.post를 통해 보낸 데이터를 req.body로 받는다
 //req.body를 사용하려면 app.js에서 app.use(express...)로 가져와야한다.
+
+router.get('/', async(req, res, next) => {
+  try{
+    if(req.user){
+      const fullUserWithoutPassword = await User.findOne({
+        where: { id: req.user.id },
+        //attributes: ['id', 'email', 'nickname'],
+        attributes: {
+          exclude: ['password']
+        },
+        //다른 모델에서 관계가 있는 것을 include해서 보낼 수 있다.
+        include: [{
+          model: Post,
+          attributes: ['id'],//내용까지 다 갖고 오면 데이터가 너무 커지므로 필요한 데이터만 가져오기
+        }, {
+          model: User,
+          as: 'Following',
+          attributes: ['id'],
+        }, {
+          model: User,
+          as: 'Follower',
+          attributes: ['id'],
+        }]
+      })
+      console.log(fullUserWithoutPassword);
+      res.status(200).json(fullUserWithoutPassword);
+    }else {
+      res.status(200).json(null);
+    }
+  }catch (error){
+    console.error(error);
+    next(error);
+  }
+ });
 
 router.post('/', isNotLoggedIn, async (req, res, next) => { //POST /user/ 회원가입
   try {
@@ -55,8 +89,8 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {// 미들웨어 확장
         return next(loginErr);
       }
       // 마지막으로 passport 로그인까지 끝나면 user에서 사용자정보를 프론트로 넘겨줌...
-      const fullUserWithoutPassword =  await User.findOne({
-        where: {id: user.id},
+      const fullUserWithoutPassword = await User.findOne({
+        where: { id: user.id },
         //attributes: ['id', 'email', 'nickname'],
         attributes: {
           exclude: ['password']
@@ -64,12 +98,15 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {// 미들웨어 확장
         //다른 모델에서 관계가 있는 것을 include해서 보낼 수 있다.
         include: [{
           model: Post,
-        },{
+          attributes: ['id'],
+        }, {
           model: User,
           as: 'Following',
-        },{
+          attributes: ['id'],
+        }, {
           model: User,
           as: 'Follower',
+          attributes: ['id'],
         }]
       })
       return res.status(200).json(fullUserWithoutPassword);

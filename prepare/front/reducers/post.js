@@ -1,6 +1,6 @@
-import shorId from 'shortid';
+// import shorId from 'shortid';
 import produce from 'immer';
-import faker from 'faker';
+// import faker from 'faker';
 
 export const initialState = {
   // 속성들 서버 개발자한테 미리 물어본다. 이런식으로 달라고 요청하거나
@@ -15,25 +15,25 @@ export const initialState = {
   addPostError: null,
 };
 
-export const generateDumyPost = (number) => Array(number).fill().map(() => (
-  {
-    id: shorId.generate(),
-    User: {
-      id: shorId.generate(),
-      nickname: faker.name.findName(),
-    },
-    content: faker.lorem.paragraph(),
-    Images: [{ src: faker.image.image() }],
-    Comments: [{
-      id: shorId.generate(),
-      User: {
-        id: shorId.generate(),
-        nickname: faker.name.findName(),
-      },
-      content: faker.lorem.sentence(),
-    }],
-  }
-));
+// export const generateDumyPost = (number) => Array(number).fill().map(() => (
+//   {
+//     id: shorId.generate(),
+//     User: {
+//       id: shorId.generate(),
+//       nickname: faker.name.findName(),
+//     },
+//     content: faker.lorem.paragraph(),
+//     Images: [{ src: faker.image.image() }],
+//     Comments: [{
+//       id: shorId.generate(),
+//       User: {
+//         id: shorId.generate(),
+//         nickname: faker.name.findName(),
+//       },
+//       content: faker.lorem.sentence(),
+//     }],
+//   }
+// ));
 
 // concat은 immutable이므로 대입해줘야함
 // initialState.mainPosts = initialState.mainPosts.concat(generateDumyPost(10)); // index.js에서 LOADPOSTREUEST를 처음부터 디스패치 해주기때문에 지운다
@@ -79,14 +79,14 @@ export const addPostRequest = (data) => ({
 //   Comments: [],
 // });
 
-const dummyComment = (data) => ({
-  id: shorId.generate(),
-  User: {
-    id: 1,
-    nickname: '조더미',
-  },
-  content: data,
-});
+// const dummyComment = (data) => ({
+//   id: shorId.generate(),
+//   User: {
+//     id: 1,
+//     nickname: '조더미',
+//   },
+//   content: data,
+// });
 // 이전상태를 액션을 통해 다음 상태로 만들어내는 함수 (불변성을 지키면서)
 const reducer = produce((draft, action) => {
   switch (action.type) {
@@ -98,9 +98,9 @@ const reducer = produce((draft, action) => {
       break;
     case LOAD_POST_SUCCESS:
       // unshift()는 mutate, filter()는 immutable
-      draft.mainPosts = draft.mainPosts.concat(action.data);
       draft.loadPostLoading = false;
       draft.loadPostDone = true;
+      draft.mainPosts = action.data.concat(draft.mainPosts);
       draft.hasMorePosts = draft.mainPosts.length < 30;
       break;
     case LOAD_POST_FAILURE:

@@ -5,22 +5,20 @@ import {
   ADD_POST_SUCCESS, ADD_POST_FAILURE, ADD_POST_REQUEST,
   ADD_COMMENT_SUCCESS, ADD_COMMENT_FAILURE, ADD_COMMENT_REQUEST,
   REMOVE_POST_REQUEST, REMOVE_POST_SUCCESS, REMOVE_POST_FAILURE,
-  LOAD_POST_SUCCESS, LOAD_POST_FAILURE, generateDumyPost, LOAD_POST_REQUEST,
+  LOAD_POST_SUCCESS, LOAD_POST_FAILURE, LOAD_POST_REQUEST,
 }
   from '../reducers/post';
 import { ADD_POST_TO_ME, REMOVE_POST_FROM_ME } from '../reducers/user';
 
 function loadPostAPI(data) {
-  return axios.post(`/api/post/${data.postId}/comment`, data);
+  return axios.post('/posts', data);
 }
 function* loadPost(action) {
-  // 실패할 경우를 대비해 try catch로 감싼다.
   try {
-    // const result = yield call(addPostAPI, action.data);
-    yield delay(1000);
+    const result = yield call(loadPostAPI, action.data);
     yield put({
       type: LOAD_POST_SUCCESS,
-      data: generateDumyPost(10),
+      data: result.data,
     });
   } catch (err) {
     yield put({ // put은 dispatch 개념

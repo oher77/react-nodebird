@@ -10,7 +10,7 @@ router.post('/', isLoggedIn, async (req, res, next) => {
       content: req.body.content,
       UserId: req.user.id,  
     });
-    const pullPost = await Post.findOne({
+    const fullPost = await Post.findOne({
       where: {id: post.id},
       include: [{
         model: Image,
