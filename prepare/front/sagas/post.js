@@ -11,7 +11,7 @@ import {
 import { ADD_POST_TO_ME, REMOVE_POST_FROM_ME } from '../reducers/user';
 
 function loadPostAPI(data) {
-  return axios.post('/posts', data);
+  return axios.get('/posts', data);
 }
 function* loadPost(action) {
   try {
@@ -50,12 +50,15 @@ function* addPost(action) {
     });
   }
 }
+function removePostAPI(data) {
+  return axios.post('/post', data);
+}
 function* removePost(action) {
   try {
-    yield delay(1000);
+    const result = yield call(removePostAPI, action.data);
     yield put({
       type: REMOVE_POST_SUCCESS,
-      data: action.data,
+      data: result.data,
     }); // 결과를 받아서 이런 식으로 처리
     yield put({
       type: REMOVE_POST_FROM_ME,
@@ -75,13 +78,13 @@ function* addComment(action) {
   // 실패할 경우를 대비해 tyr catch로 감싼다.
   try {
     const result = yield call(addCommentAPI, action.data);
-    yield delay(1000);
     yield put({
       type: ADD_COMMENT_SUCCESS,
       data: result.data,
       // data: result.data
     }); // 결과를 받아서 이런 식으로 처리
   } catch (err) {
+    console.log(err);
     yield put({ // put은 dispatch 개념
       type: ADD_COMMENT_FAILURE,
       data: err.response.data,

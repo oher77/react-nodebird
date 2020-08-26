@@ -43,6 +43,10 @@ export const LOAD_POST_REQUEST = 'LOAD_POST_REQUEST';
 export const LOAD_POST_SUCCESS = 'LOAD_POST_SUCCESS';
 export const LOAD_POST_FAILURE = 'LOAD_POST_FAILURE';
 
+export const LIKE_POST_REQUEST = 'LIKE_POST_REQUEST';
+export const LIKE_POST_SUCCESS = 'LIKE_POST_SUCCESS';
+export const LIKE_POST_FAILURE = 'LIKE_POST_FAILURE';
+
 export const ADD_POST_REQUEST = 'ADD_POST_REQUEST';
 export const ADD_POST_SUCCESS = 'ADD_POST_SUCCESS';
 export const ADD_POST_FAILURE = 'ADD_POST_FAILURE';
@@ -90,6 +94,20 @@ export const addPostRequest = (data) => ({
 // 이전상태를 액션을 통해 다음 상태로 만들어내는 함수 (불변성을 지키면서)
 const reducer = produce((draft, action) => {
   switch (action.type) {
+    case LIKE_POST_REQUEST:
+      draft.likePostLoading = true;
+      draft.likePostDone = false;
+      draft.likePostError = null;
+      break;
+    case LIKE_POST_SUCCESS:
+      // unshift()는 mutate, filter()는 immutable
+      draft.likePostLoading = false;
+      draft.likePostDone = true;
+      break;
+    case LIKE_POST_FAILURE:
+      draft.likePostLoading = false;
+      draft.likePostError = action.error;
+      break;
     case LOAD_POST_REQUEST:
       draft.loadPostLoading = true;
       draft.loadPostDone = false;

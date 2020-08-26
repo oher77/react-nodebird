@@ -5,8 +5,8 @@ const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 // 중복되는 url 라우터 분리
 const postRouter = require('./routes/post');
-const userRouter = require('./routes/user');
 const postsRouter = require('./routes/posts');
+const userRouter = require('./routes/user');
 
 const db = require('./models');
 const passportConfig = require('./passport');
@@ -49,10 +49,10 @@ app.get('/', (req, res) => {
 })
 // 중복되는 url 라우터 분리
 // '/post'가 prefix가 된다.
+app.use('/posts', postsRouter);
 app.use('/post', postRouter);
 //url별로 라우터를 생성한다.
 app.use('/user', userRouter);
-app.use('/posts', postsRouter);
 
 app.listen(3065, () => {
   console.log('서버실행!');

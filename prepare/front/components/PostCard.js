@@ -8,7 +8,7 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import PostImages from './PostImages';
 import CommentForm from './CommentForm';
-import { REMOVE_POST_REQUEST } from '../reducers/post';
+import { REMOVE_POST_REQUEST, LIKE_POST_REQUEST } from '../reducers/post';
 
 const PostCard = ({ post }) => {
   const dispatch = useDispatch();
@@ -19,10 +19,19 @@ const PostCard = ({ post }) => {
   // 이렇게 한 줄로 써줄 수도 있다.
   // const id = useSelector((state)=> state.user.me?.id)
 
-  const [liked, setLiked] = useState(false);
+  const { likePostDone, unlikePostDone } = useSelector((state) => state.post);
   const [commentForOpened, setCommentForOpened] = useState(false);
-  const onToggleLike = useCallback(() => {
-    setLiked((prev) => !prev);
+  const onLike = useCallback(() => {
+    dispatch({
+      type: LIKE_POST_REQUEST,
+      data: post.id,
+    });
+  }, []);
+  const onUnLike = useCallback(() => {
+    dispatch({
+      type: UNLIKE_POST_REQUEST,
+      data: post.id,
+    });
   }, []);
   const onToggleComment = useCallback(() => {
     setCommentForOpened((prev) => !prev);
@@ -40,8 +49,8 @@ const PostCard = ({ post }) => {
         actions={[
           <RetweetOutlined key="retweet" />,
           liked
-            ? <HeartFilled style={{ color: 'red' }} key="heart" onClick={onToggleLike} />
-            : <HeartOutlined key="heart" onClick={onToggleLike} />,
+            ? <HeartFilled style={{ color: 'red' }} key="heart" onClick={onLike} />
+            : <HeartOutlined key="heart" onClick={onUnLike} />,
           <MessageOutlined key="comment" onClick={onToggleComment} />,
           <Popover
             key="more"
@@ -96,10 +105,10 @@ const PostCard = ({ post }) => {
 PostCard.propTypes = {
   // object는 shape로 각각의 타입을 구체적으로 정할수 있다
   post: PropTypes.shape({
-    id: PropTypes.string,
+    id: PropTypes.number,
     User: PropTypes.object,
     content: PropTypes.string,
-    createdAt: PropTypes.object,
+    createdAt: PropTypes.string,
     Comments: PropTypes.arrayOf(PropTypes.object),
     Images: PropTypes.arrayOf(PropTypes.object),
   }).isRequired,
