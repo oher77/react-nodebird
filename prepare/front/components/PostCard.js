@@ -8,7 +8,8 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import PostImages from './PostImages';
 import CommentForm from './CommentForm';
-import { REMOVE_POST_REQUEST, LIKE_POST_REQUEST } from '../reducers/post';
+import FollowButton from './FollowButton';
+import { REMOVE_POST_REQUEST, LIKE_POST_REQUEST, UNLIKE_POST_REQUEST } from '../reducers/post';
 
 const PostCard = ({ post }) => {
   const dispatch = useDispatch();
@@ -18,8 +19,7 @@ const PostCard = ({ post }) => {
   const id = me?.id; // me && me.id
   // 이렇게 한 줄로 써줄 수도 있다.
   // const id = useSelector((state)=> state.user.me?.id)
-
-  const { likePostDone, unlikePostDone } = useSelector((state) => state.post);
+  const liked = post.Likers.find((v) => v.id === id);
   const [commentForOpened, setCommentForOpened] = useState(false);
   const onLike = useCallback(() => {
     dispatch({
@@ -27,7 +27,7 @@ const PostCard = ({ post }) => {
       data: post.id,
     });
   }, []);
-  const onUnLike = useCallback(() => {
+  const onUnlike = useCallback(() => {
     dispatch({
       type: UNLIKE_POST_REQUEST,
       data: post.id,
@@ -49,8 +49,8 @@ const PostCard = ({ post }) => {
         actions={[
           <RetweetOutlined key="retweet" />,
           liked
-            ? <HeartFilled style={{ color: 'red' }} key="heart" onClick={onLike} />
-            : <HeartOutlined key="heart" onClick={onUnLike} />,
+            ? <HeartFilled style={{ color: 'red' }} key="heart" onClick={onUnlike} />
+            : <HeartOutlined key="heart" onClick={onLike} />,
           <MessageOutlined key="comment" onClick={onToggleComment} />,
           <Popover
             key="more"
@@ -64,7 +64,13 @@ const PostCard = ({ post }) => {
                       <Button type="danger" onClick={onRemovePpost} loading={removePostLoading}>삭제</Button>
                     </>
                   )
-                  : <Button>신고</Button>}
+                  : (
+                    <>
+                      <FollowButton post={post} />
+                      <Button type="danger">신고</Button>
+                    </>
+                  )
+                }
               </Button.Group>
             )}
           >

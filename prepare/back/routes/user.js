@@ -14,9 +14,9 @@ const router = express.Router();
 // 프론드에서 axios.post를 통해 보낸 데이터를 req.body로 받는다
 //req.body를 사용하려면 app.js에서 app.use(express...)로 가져와야한다.
 
-router.get('/', async(req, res, next) => {
-  try{
-    if(req.user){
+router.get('/', async (req, res, next) => {
+  try {
+    if (req.user) {
       const fullUserWithoutPassword = await User.findOne({
         where: { id: req.user.id },
         //attributes: ['id', 'email', 'nickname'],
@@ -39,14 +39,14 @@ router.get('/', async(req, res, next) => {
       })
       console.log(fullUserWithoutPassword);
       res.status(200).json(fullUserWithoutPassword);
-    }else {
+    } else {
       res.status(200).json(null);
     }
-  }catch (error){
+  } catch (error) {
     console.error(error);
     next(error);
   }
- });
+});
 
 router.post('/', isNotLoggedIn, async (req, res, next) => { //POST /user/ 회원가입
   try {
@@ -119,5 +119,19 @@ router.post('/logout', isLoggedIn, async (req, res, next) => {
   req.session.destroy();
   res.send('ok');
 });
+
+router.patch('/nickname', isLoggedIn, async (req, res, next) => {
+  try {
+    await User.update({
+      nickname: req.body.nickname,
+    }, {
+      where: { id: req.user.id },
+    });
+    res.status(200).json({ nickname: req.body.nickname });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+})
 
 module.exports = router;

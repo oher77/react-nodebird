@@ -5,6 +5,7 @@ import {
   LOG_OUT_REQUEST, LOG_OUT_SUCCESS, LOG_OUT_FAILURE,
   SIGN_UP_REQUEST, SIGN_UP_SUCCESS, SIGN_UP_FAILURE,
   LOAD_MY_INFO_REQUEST, LOAD_MY_INFO_SUCCESS, LOAD_MY_INFO_FAILURE,
+  CHANGE_NICKNAME_REQUEST, CHANGE_NICKNAME_SUCCESS, CHANGE_NICKNAME_FAILURE,
 } from '../reducers/user';
 
 function loadMyInfoAPI() {
@@ -100,6 +101,28 @@ function* signUp(action) {
   }
 }
 
+function changeNicknameAPI(data) { // data는 action.data {email:, password: nickname: }객체
+  // post, put, patch만  백엔드로 data 보내기 가능.
+  return axios.patch('/user/nickname', { nickname: data });
+}
+
+function* changeNickname(action) {
+  // 실패할 경우를 대비해 tyr catch로 감싼다.
+  try {
+    const result = yield call(changeNicknameAPI, action.data);
+    yield put({
+      type: CHANGE_NICKNAME_SUCCESS,
+      data: result.data.nickname,
+    });
+  } catch (err) {
+    console.log(err);
+    yield put({ // put은 dispatch 개념
+      type: CHANGE_NICKNAME_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
 function* watchLoadMyInfo() {
   yield takeLatest(LOAD_MY_INFO_REQUEST, loadMyInfo);
 }
@@ -112,6 +135,9 @@ function* watchLogOut() {
 function* watchSignUp() {
   yield takeLatest(SIGN_UP_REQUEST, signUp);
 }
+function* watchChangeNickname() {
+  yield takeLatest(CHANGE_NICKNAME_REQUEST, changeNickname);
+}
 
 export default function* userSaga() {
   yield all([
@@ -119,5 +145,6 @@ export default function* userSaga() {
     fork(watchLogIn),
     fork(watchLogOut),
     fork(watchSignUp),
+    fork(watchChangeNickname),
   ]);
 }

@@ -39,6 +39,10 @@ export const UNFOLLOW_REQUEST = 'UNFOLLOW_REQUEST';
 export const UNFOLLOW_SUCCESS = 'UNFOLLOW_SUCCESS';
 export const UNFOLLOW_FAILURE = 'UNFOLLOW_FAILURE';
 
+export const CHANGE_NICKNAME_REQUEST = 'CHANGE_NICKNAME_REQUEST';
+export const CHANGE_NICKNAME_SUCCESS = 'CHANGE_NICKNAME_SUCCESS';
+export const CHANGE_NICKNAME_FAILURE = 'CHANGE_NICKNAME_FAILURE';
+
 export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
 export const REMOVE_POST_FROM_ME = 'REMOVE_POST_FROM_ME';
 
@@ -68,23 +72,23 @@ export const logoutFailureAction = (data) => ({
   data,
 });
 
-const dummyUser = (data) => ({
-  ...data,
-  nickname: 'herUse',
-  id: 1,
-  email: 'heruse@dreamwiz.com',
-  Posts: [],
-  Followings: [
-    { nickname: '부기초', id: 2, email: 'bogicho@gmail.com' },
-    { nickname: '하나초', id: 3, email: 'hanacho@gmail.com' },
-    { nickname: '체리초', id: 4, email: 'hanacho@gmail.com' },
-  ],
-  Followers: [
-    { nickname: '부기초', id: 2, email: 'bogicho@gmail.com' },
-    { nickname: '하나초', id: 3, email: 'hanacho@gmail.com' },
-    { nickname: '체리초', id: 4, email: 'hanacho@gmail.com' },
-  ],
-});
+// const dummyUser = (data) => ({
+//   ...data,
+//   nickname: 'herUse',
+//   id: 1,
+//   email: 'heruse@dreamwiz.com',
+//   Posts: [],
+//   Followings: [
+//     { nickname: '부기초', id: 2, email: 'bogicho@gmail.com' },
+//     { nickname: '하나초', id: 3, email: 'hanacho@gmail.com' },
+//     { nickname: '체리초', id: 4, email: 'hanacho@gmail.com' },
+//   ],
+//   Followers: [
+//     { nickname: '부기초', id: 2, email: 'bogicho@gmail.com' },
+//     { nickname: '하나초', id: 3, email: 'hanacho@gmail.com' },
+//     { nickname: '체리초', id: 4, email: 'hanacho@gmail.com' },
+//   ],
+// });
 
 const reducer = (state = initialState, action) => produce(state, (draft) => {
   switch (action.type) {
@@ -144,6 +148,20 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
     case SIGN_UP_FAILURE:
       draft.signUpLoading = false;
       draft.signUpError = action.error;
+      break;
+    case CHANGE_NICKNAME_REQUEST:
+      draft.changeNicknameLoading = true;
+      draft.changeNicknameDone = false;
+      draft.changeNicknameError = null;
+      break;
+    case CHANGE_NICKNAME_SUCCESS:
+      draft.me.nickname = action.data;
+      draft.changeNicknameLoading = false;
+      draft.changeNicknameDone = true;
+      break;
+    case CHANGE_NICKNAME_FAILURE:
+      draft.changeNicknameLoading = false;
+      draft.changeNicknameError = action.error;
       break;
     case ADD_POST_TO_ME:
       draft.me.Posts.unshift({ id: action.data });
